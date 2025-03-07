@@ -1,8 +1,10 @@
 class SalaryCalculator:
     def __init__(self, gross_salary):
-        if gross_salary < 0:
+        if not isinstance(gross_salary, (int, float)):
+            raise TypeError("Salary must be a number.")
+        if gross_salary <= 0:
             raise ValueError("Salary must be a positive number.")
-        
+
         self.gross_salary = gross_salary
         self.sss_deduction = self.calculate_sss_deduction()
         self.philhealth_deduction = self.calculate_philhealth_deduction()
@@ -58,18 +60,34 @@ class SalaryCalculator:
             print(f"{key}: {value:.2f}")
 
 
+def get_valid_salary():
+    """Function to get valid salary input from the user."""
+    while True:
+        try:
+            gross_salary = input("Enter your monthly salary: ").strip()
+            
+            # Ensure it's a valid number
+            if not gross_salary.replace('.', '', 1).isdigit():
+                raise ValueError("Invalid input. Please enter a valid numeric salary.")
+            
+            gross_salary = float(gross_salary)
+            
+            # Ensure salary is positive
+            if gross_salary <= 0:
+                raise ValueError("Salary must be a positive number.")
+            
+            return gross_salary
+        except ValueError as e:
+            print(f"Error: {e}. Please try again.")
+
+
 def main():
     """Main function to handle user input and process salary deductions."""
-    try:
-        gross_salary = input("Enter your monthly salary: ").strip()  # Ensure whitespace is removed
-        print(f"Input received: {gross_salary}")  # Debugging line
+    gross_salary = get_valid_salary()
+    
+    calculator = SalaryCalculator(gross_salary)
+    calculator.display_salary_details()
 
-        gross_salary = float(gross_salary)  # Convert input to float
-
-        calculator = SalaryCalculator(gross_salary)
-        calculator.display_salary_details()
-    except ValueError as e:
-        print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()
