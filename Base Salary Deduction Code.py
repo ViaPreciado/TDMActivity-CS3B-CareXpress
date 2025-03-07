@@ -1,82 +1,75 @@
-def calculate_sss_deduction(gross_salary):
-    """Calculate SSS deduction (fixed value)."""
-    SSS_DEDUCTION = 1200
-    return SSS_DEDUCTION
+class SalaryCalculator:
+    def __init__(self, gross_salary):
+        if gross_salary < 0:
+            raise ValueError("Salary must be a positive number.")
+        
+        self.gross_salary = gross_salary
+        self.sss_deduction = self.calculate_sss_deduction()
+        self.philhealth_deduction = self.calculate_philhealth_deduction()
+        self.pagibig_deduction = self.calculate_pagibig_deduction()
+        self.tax_deduction = self.calculate_tax_deduction()
+        self.total_deductions = self.calculate_total_deductions()
+        self.net_salary = self.calculate_net_salary()
 
-def calculate_pagibig_deduction(gross_salary):
-    """Calculate Pag-IBIG deduction (fixed value)."""
-    PAGIBIG_DEDUCTION = 100
-    return PAGIBIG_DEDUCTION
+    def calculate_sss_deduction(self):
+        """Calculate SSS deduction (fixed value)."""
+        return 1200
 
-def calculate_tax_deduction(gross_salary):
-    """Calculate tax deduction (fixed value for simplicity)."""
-    TAX_DEDUCTION = 1875
-    return TAX_DEDUCTION
+    def calculate_pagibig_deduction(self):
+        """Calculate Pag-IBIG deduction (fixed value)."""
+        return 100
 
-def calculate_philhealth_deduction(gross_salary):
-    """Calculate PhilHealth deduction (5% of salary divided by 2)."""
-    philhealth_deduction = (gross_salary * 0.05) / 2
-    return philhealth_deduction
+    def calculate_tax_deduction(self):
+        """Calculate tax deduction (fixed value for simplicity)."""
+        return 1875
 
-def calculate_total_deductions(gross_salary):
-    """Calculate total deductions."""
-    sss_deduction = calculate_sss_deduction(gross_salary)
-    philhealth_deduction = calculate_philhealth_deduction(gross_salary)
-    pagibig_deduction = calculate_pagibig_deduction(gross_salary)
-    tax_deduction = calculate_tax_deduction(gross_salary)
-    total_deductions = sss_deduction + philhealth_deduction + pagibig_deduction + tax_deduction
-    return total_deductions
+    def calculate_philhealth_deduction(self):
+        """Calculate PhilHealth deduction (5% of salary divided by 2)."""
+        return (self.gross_salary * 0.05) / 2
 
-def calculate_net_salary(gross_salary):
-    """Calculate net salary."""
-    total_deductions = calculate_total_deductions(gross_salary)
-    net_salary = gross_salary - total_deductions
-    return net_salary
+    def calculate_total_deductions(self):
+        """Calculate total deductions."""
+        return (
+            self.sss_deduction + self.philhealth_deduction +
+            self.pagibig_deduction + self.tax_deduction
+        )
 
-def calculate_deductions(gross_salary):
-    """Calculate individual salary deductions and return total deductions & net salary."""
-    sss_deduction = calculate_sss_deduction(gross_salary)
-    philhealth_deduction = calculate_philhealth_deduction(gross_salary)
-    pagibig_deduction = calculate_pagibig_deduction(gross_salary)
-    tax_deduction = calculate_tax_deduction(gross_salary)
-    total_deductions = calculate_total_deductions(gross_salary)
-    net_salary = calculate_net_salary(gross_salary)
+    def calculate_net_salary(self):
+        """Calculate net salary."""
+        return self.gross_salary - self.total_deductions
 
-    return {
-        "gross_salary": gross_salary,
-        "SSS": sss_deduction,
-        "PhilHealth": philhealth_deduction,
-        "Pag-IBIG": pagibig_deduction,
-        "Tax": tax_deduction,
-        "Total Deductions": total_deductions,
-        "Net Salary": net_salary
-    }
+    def get_salary_details(self):
+        """Return salary details as a dictionary."""
+        return {
+            "Gross Salary": self.gross_salary,
+            "SSS Deduction": self.sss_deduction,
+            "PhilHealth Deduction": self.philhealth_deduction,
+            "Pag-IBIG Deduction": self.pagibig_deduction,
+            "Tax Deduction": self.tax_deduction,
+            "Total Deductions": self.total_deductions,
+            "Net Salary": self.net_salary
+        }
 
-def display_salary_details(salary_details):
-    """Display salary breakdown in a structured format."""
-    print("\n--- Salary Breakdown ---")
-    print(f"Gross Salary: {salary_details['gross_salary']:.2f}")
-    print(f"SSS Deduction: {salary_details['SSS']:.2f}")
-    print(f"PhilHealth Deduction: {salary_details['PhilHealth']:.2f}")
-    print(f"Pag-IBIG Deduction: {salary_details['Pag-IBIG']:.2f}")
-    print(f"Tax Deduction: {salary_details['Tax']:.2f}")
-    print(f"Total Deductions: {salary_details['Total Deductions']:.2f}")
-    print(f"Net Salary: {salary_details['Net Salary']:.2f}")
+    def display_salary_details(self):
+        """Display salary breakdown in a structured format."""
+        details = self.get_salary_details()
+        print("\n--- Salary Breakdown ---")
+        for key, value in details.items():
+            print(f"{key}: {value:.2f}")
+
 
 def main():
     """Main function to handle user input and process salary deductions."""
     try:
-        gross_salary = float(input("Enter your monthly salary: "))
+        gross_salary = input("Enter your monthly salary: ").strip()  # Ensure whitespace is removed
+        print(f"Input received: {gross_salary}")  # Debugging line
 
-        if gross_salary < 0:
-            print("Error: Salary must be a positive number.")
-            return
+        gross_salary = float(gross_salary)  # Convert input to float
 
-        salary_details = calculate_deductions(gross_salary)
-        display_salary_details(salary_details)
-
-    except ValueError:
-        print("Error: Invalid input. Please enter a numeric value for salary.")
+        calculator = SalaryCalculator(gross_salary)
+        calculator.display_salary_details()
+    except ValueError as e:
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()
